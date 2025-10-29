@@ -51,28 +51,39 @@ export default function Home() {
   // Ref mirror of slideshow active to ensure async loop sees live value
   const slideshowActiveRef = useRef(false)
 
-  // Cancel slideshow on manual scroll
+  // Cancel slideshow on explicit user input only (not programmatic smooth scroll)
   useEffect(() => {
-    let scrollTimeout: NodeJS.Timeout
+    if (!isSlideshowActive) return
 
-    const handleScroll = () => {
-      if (isSlideshowActive) {
-        clearTimeout(scrollTimeout)
-        scrollTimeout = setTimeout(() => {
-          slideshowActiveRef.current = false
-          setIsSlideshowActive(false)
-          setSlideshowProgress(0)
-        }, 150) // Small delay to avoid false positives
-      }
+    const cancel = () => {
+      slideshowActiveRef.current = false
+      setIsSlideshowActive(false)
+      setSlideshowProgress(0)
     }
 
-    if (isSlideshowActive) {
-      window.addEventListener('scroll', handleScroll, { passive: true })
+    const onWheel = () => cancel()
+    const onTouchStart = () => cancel()
+    const onKeyDown = (e: KeyboardEvent) => {
+      const scrollKeys = [
+        'ArrowUp',
+        'ArrowDown',
+        'PageUp',
+        'PageDown',
+        'Home',
+        'End',
+        ' ', // Space
+      ]
+      if (scrollKeys.includes(e.key)) cancel()
     }
+
+    window.addEventListener('wheel', onWheel, { passive: true })
+    window.addEventListener('touchstart', onTouchStart, { passive: true })
+    window.addEventListener('keydown', onKeyDown)
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
-      clearTimeout(scrollTimeout)
+      window.removeEventListener('wheel', onWheel)
+      window.removeEventListener('touchstart', onTouchStart)
+      window.removeEventListener('keydown', onKeyDown)
     }
   }, [isSlideshowActive])
 

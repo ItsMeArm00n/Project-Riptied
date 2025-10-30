@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Riptide</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .text-outline-light {
+          -webkit-text-stroke: 1px #111827;
+          color: transparent;
+        }
+        .dark .text-outline-dark {
+          -webkit-text-stroke: 1px #f9fafb;
+          color: transparent;
+        }
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#007BFF",
+              "background-light": "#F9FAFB",
+              "background-dark": "#0A0A0A",
+            },
+            fontFamily: {
+              display: ["Anton", "sans-serif"],
+              body: ["Space Grotesk", "sans-serif"],
+            },
+            borderRadius: { DEFAULT: "0.25rem" },
+            keyframes: {
+              "fade-in": { from: { opacity: 0 }, to: { opacity: 1 } },
+              "fade-in-down": { from: { opacity: 0, transform: "translateY(-8px)" }, to: { opacity: 1, transform: "translateY(0)" } },
+              "slide-up": { from: { opacity: 0, transform: "translateY(16px)" }, to: { opacity: 1, transform: "translateY(0)" } },
+              float: { "0%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-6px)" }, "100%": { transform: "translateY(0)" } },
+            },
+            animation: {
+              "fade-in": "fade-in 700ms ease-out both",
+              "fade-in-down": "fade-in-down 600ms ease-out both",
+              "slide-up": "slide-up 700ms 120ms ease-out both",
+              "float-slow": "float 9s ease-in-out infinite",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      html { scroll-behavior: smooth; }
+      /* Animated underline for nav links */
+      .nav-underline { position: relative; }
+      .nav-underline::after {
+        content: "";
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: 6px;
+        height: 2px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform .25s ease;
+        opacity: .7;
+      }
+      .nav-underline:hover::after { transform: scaleX(1); }
+    </style>
+  </head>
+  <body class="bg-background-light dark:bg-background-dark font-body text-gray-900 dark:text-gray-100 min-h-screen antialiased">
+    <div class="relative min-h-screen w-full overflow-hidden p-4 sm:p-6 lg:p-8">
+      <header class="container mx-auto relative z-20 animate-fade-in-down">
+        <nav class="flex justify-between items-center py-4">
+          <div>
+            <a class="font-display text-2xl tracking-wider bg-primary text-white py-1 px-3" href="code.html">RIPTIDE</a>
+          </div>
+          <div class="hidden md:flex items-center space-x-1 border border-gray-400 dark:border-gray-600">
+            <a class="px-5 py-2 text-sm font-medium uppercase tracking-widest nav-underline hover:bg-gray-200/40 dark:hover:bg-gray-800/50 transition-all" href="about.html">About Us</a>
+            <div class="w-px h-5 bg-gray-400 dark:bg-gray-600"></div>
+            <a class="px-5 py-2 text-sm font-medium uppercase tracking-widest nav-underline hover:bg-gray-200/40 dark:hover:bg-gray-800/50 transition-all" href="technology.html">Technology</a>
+            <div class="w-px h-5 bg-gray-400 dark:bg-gray-600"></div>
+            <a class="px-5 py-2 text-sm font-medium uppercase tracking-widest nav-underline hover:bg-gray-200/40 dark:hover:bg-gray-800/50 transition-all" href="project.html">The Project</a>
+            <div class="w-px h-5 bg-gray-400 dark:bg-gray-600"></div>
+            <a class="px-5 py-2 text-sm font-medium uppercase tracking-widest nav-underline hover:bg-gray-200/40 dark:hover:bg-gray-800/50 transition-all" href="research.html">Research</a>
+          </div>
+          <div class="md:hidden">
+            <button class="p-2" aria-label="Open menu">
+              <svg class="w-6 h-6 text-gray-900 dark:text-gray-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6h16M4 12h16m-7 6h7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </button>
+          </div>
+        </nav>
+      </header>
+      <!-- Hero section: centered content without absolute layout -->
+      <section class="relative container mx-auto min-h-[88vh] flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8">
+        <div class="absolute inset-0 flex items-center justify-center opacity-10 dark:opacity-10 pointer-events-none z-0">
+          <img
+            alt="Detailed world map outline"
+            class="w-full h-auto max-w-6xl mx-auto dark:invert animate-float-slow"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9B2RhMEv9EsoLXd2MJNPZ5ap6ZuWAb1Gz6FEtarGpZIGOK1vfTmumjlpZULnbbmZ5pbj7siqPAag2lN5mTJjsP88hA9hIobHu78TAst15C92u6E-guEmq3SNFcih2c8cp0VMeQa5PamXu50r3Jrf4aLhRmQX05ieWXZjppFr-Sm4RxFjuQe046MPZ-OPmzMEPIxFEjKhG0NiAukZMqHa5zGl0nDaGQnsP5-jVyGIap3W1hLfEGaxzWdf6UZOL8WxpOD5Xx1jC_lQ"
+          />
+        </div>
+        <div class="relative z-10">
+          <h1 data-reveal class="opacity-0 translate-y-6 transition-all duration-700 ease-out font-display text-[8vw] sm:text-[6.5vw] lg:text-[6rem] leading-none tracking-tighter text-gray-900 dark:text-gray-100">
+            Cherishing the World's <span class="text-primary">Ocean</span>
+          </h1>
+          <h2 data-reveal class="opacity-0 translate-y-6 transition-all duration-700 ease-out delay-150 font-display text-[8vw] sm:text-[6.5vw] lg:text-[6rem] leading-none tracking-tighter text-outline-light dark:text-outline-dark">
+            Our Future
+          </h2>
+        </div>
+      </section>
+
+      <!-- Content section following hero -->
+      <section class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center max-w-3xl mx-auto">
+          <h3 data-reveal class="opacity-0 translate-y-6 transition-all duration-700 ease-out font-display text-3xl sm:text-4xl tracking-tight">Removing plastic. Restoring balance.</h3>
+          <p data-reveal class="opacity-0 translate-y-6 transition-all duration-700 ease-out delay-100 mt-3 text-base text-gray-700 dark:text-gray-300">
+            Stop plastics before they fragment — restore balance, ripple by ripple.
+          </p>
+          <div data-reveal class="opacity-0 translate-y-6 transition-all duration-700 ease-out delay-200 mt-6 flex flex-wrap gap-3 justify-center">
+            <a class="inline-block bg-primary text-white px-5 py-2 text-sm font-medium uppercase tracking-widest rounded transition-transform duration-200 hover:scale-105 active:scale-95" href="project.html">See the Project</a>
+            <a class="inline-block border border-gray-400 dark:border-gray-600 px-5 py-2 text-sm font-medium uppercase tracking-widest text-gray-900 dark:text-gray-100 hover:bg-gray-200/40 dark:hover:bg-gray-800/50 transition-all rounded" href="about.html">Learn About Us</a>
+          </div>
+        </div>
+        <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <a data-reveal href="about.html" class="opacity-0 translate-y-6 transition-all duration-700 ease-out block border border-gray-300 dark:border-gray-800 hover:-translate-y-1 hover:shadow-xl hover:border-gray-400 dark:hover:border-gray-700 p-4">
+            <h4 class="font-semibold">About Us</h4>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Sustainability, innovation, collaboration, education, and ethics.</p>
+          </a>
+          <a data-reveal href="research.html" class="opacity-0 translate-y-6 transition-all duration-700 ease-out delay-75 block border border-gray-300 dark:border-gray-800 hover:-translate-y-1 hover:shadow-xl hover:border-gray-400 dark:hover:border-gray-700 p-4">
+            <h4 class="font-semibold">Research</h4>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">The plastic crisis, gyres, and circular economic value.</p>
+          </a>
+          <a data-reveal href="project.html" class="opacity-0 translate-y-6 transition-all duration-700 ease-out delay-150 block border border-gray-300 dark:border-gray-800 hover:-translate-y-1 hover:shadow-xl hover:border-gray-400 dark:hover:border-gray-700 p-4">
+            <h4 class="font-semibold">Project</h4>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Active removal at hotspots with real-time data.</p>
+          </a>
+          <a data-reveal href="technology.html" class="opacity-0 translate-y-6 transition-all duration-700 ease-out delay-200 block border border-gray-300 dark:border-gray-800 hover:-translate-y-1 hover:shadow-xl hover:border-gray-400 dark:hover:border-gray-700 p-4">
+            <h4 class="font-semibold">Technology</h4>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">AI-optimized pyrolysis for efficient cleanup.</p>
+          </a>
+        </div>
+        <footer class="mt-16 border-t border-gray-300 dark:border-gray-800 pt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+          © <span id="year">2025</span> Project Riptide • Clean today, learn for tomorrow — action plus data.
+        </footer>
+      </section>
+    </div>
+    <script>
+      // Update year
+      const y = document.getElementById('year');
+      if (y) y.textContent = String(new Date().getFullYear());
+
+      // Reveal-on-scroll animations
+      const revealEls = document.querySelectorAll('[data-reveal]');
+      revealEls.forEach(el => {
+        // ensure initial hidden state is present if author missed it
+        el.classList.add('opacity-0');
+        if (![...el.classList].some(c => c.startsWith('translate-'))) {
+          el.classList.add('translate-y-6');
+        }
+      });
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('opacity-100','translate-y-0');
+            entry.target.classList.remove('opacity-0');
+            // leave transition utility classes in place
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+      revealEls.forEach(el => io.observe(el));
+    </script>
+  </body>
+</html>

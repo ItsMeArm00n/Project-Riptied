@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project Riptide • About</title>
+    <meta name="description" content="About Project Riptide — our values and approach to restoring aquatic ecosystems by removing plastic pollution." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#007BFF",
+              "background-light": "#F9FAFB",
+              "background-dark": "#0A0A0A",
+            },
+            fontFamily: {
+              display: ["Anton", "sans-serif"],
+              body: ["Space Grotesk", "sans-serif"],
+            },
+            keyframes: {
+              "fade-in": { from: { opacity: 0 }, to: { opacity: 1 } },
+              "fade-in-down": { from: { opacity: 0, transform: "translateY(-8px)" }, to: { opacity: 1, transform: "translateY(0)" } },
+              "slide-up": { from: { opacity: 0, transform: "translateY(16px)" }, to: { opacity: 1, transform: "translateY(0)" } },
+            },
+            animation: {
+              "fade-in": "fade-in 700ms ease-out both",
+              "fade-in-down": "fade-in-down 600ms ease-out both",
+              "slide-up": "slide-up 700ms 120ms ease-out both",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      html { scroll-behavior: smooth; }
+      .nav-underline { position: relative; }
+      .nav-underline::after { content:""; position:absolute; left:10px; right:10px; bottom:6px; height:2px; background: currentColor; transform: scaleX(0); transform-origin:center; transition: transform .25s ease; opacity:.7; }
+      .nav-underline:hover::after { transform: scaleX(1); }
+    </style>
+  </head>
+  <body class="bg-background-light dark:bg-background-dark font-body text-gray-900 dark:text-gray-100 min-h-screen antialiased">
+    <div class="relative min-h-screen w-full overflow-hidden p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <header class="container mx-auto relative z-20 animate-fade-in-down">
+        <nav class="flex justify-between items-center py-4">
+          <div>
+            <a class="font-display text-2xl tracking-wider bg-primary text-white py-1 px-3" href="code.html">RIPTIDE</a>
+          </div>
+          <div class="hidden md:flex items-center space-x-1 border border-gray-400 dark:border-gray-600">
+            <a class="px-5 py-2 text-sm font-medium uppercase tracking-widest nav-underline hover:bg-gray-200/40 dark:hover:bg-gray-800/50 transition-all" href="about.html">About Us</a>
+            <div class="w-px h-5 bg-gray-400 dark:bg-gray-600"></div>
+            <a class="px-5 py-2 text-sm font-medium uppercase tracking-widest nav-underline hover:bg-gray-200/40 dark:hover:bg-gray-800/50 transition-all" href="technology.html">Technology</a>
+            <div class="w-px h-5 bg-gray-400 dark:bg-gray-600"></div>
+            <a class="px-5 py-2 text-sm font-medium uppercase tracking-widest nav-underline hover:bg-gray-200/40 dark:hover:bg-gray-800/50 transition-all" href="project.html">The Project</a>
+            <div class="w-px h-5 bg-gray-400 dark:bg-gray-600"></div>
+            <a class="px-5 py-2 text-sm font-medium uppercase tracking-widest nav-underline hover:bg-gray-200/40 dark:hover:bg-gray-800/50 transition-all" href="research.html">Research</a>
+          </div>
+          <div class="md:hidden">
+            <button class="p-2" aria-label="Open menu">
+              <svg class="w-6 h-6 text-gray-900 dark:text-gray-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6h16M4 12h16m-7 6h7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      <!-- Page content -->
+      <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h1 data-reveal class="opacity-0 translate-y-6 transition-all duration-700 ease-out font-display text-4xl sm:text-5xl tracking-tight text-center">Built for restoration. Guided by ethics.</h1>
+
+        <section class="mt-10 grid gap-6">
+          <div data-reveal class="opacity-0 translate-y-6 transition-all duration-700 ease-out border border-gray-700/40 bg-black/10 p-6">
+            <h2 class="text-2xl font-semibold">Our Values</h2>
+            <ul class="mt-3 list-disc pl-6 space-y-2 text-gray-300">
+              <li><strong>Environmental Restoration:</strong> Removing plastic pollution to heal aquatic ecosystems.</li>
+              <li><strong>Innovation &amp; Creativity:</strong> Deploying bio-inspired solutions like our plastic-removing robotic fish.</li>
+              <li><strong>Collaboration:</strong> Partnering with research institutions and local communities to scale impact.</li>
+              <li><strong>Education &amp; Awareness:</strong> Promoting understanding of plastic pollution and the importance of healthy water bodies.</li>
+              <li><strong>Ethical Responsibility:</strong> Ensuring marine safety in the development and deployment of our technologies.</li>
+            </ul>
+            <p class="mt-3 italic text-gray-400">Innovation, collaboration, education, and ethics — our values drive real ocean restoration.</p>
+          </div>
+
+          <div data-reveal class="opacity-0 translate-y-6 transition-all duration-700 ease-out border border-gray-700/40 bg-black/10 p-6">
+            <h2 class="text-2xl font-semibold">Our Approach</h2>
+            <p class="mt-2">We deploy autonomous, bio-inspired robotic fish to intercept plastic waste before it fragments into microplastics. These units:</p>
+            <ul class="mt-3 list-disc pl-6 space-y-2 text-gray-300">
+              <li>Collect and concentrate plastic debris for efficient retrieval.</li>
+              <li>Enable recycling and repurposing of captured materials.</li>
+              <li>Help restore aquatic balance — ripple by ripple.</li>
+            </ul>
+            <p class="mt-3 italic text-gray-400">Stop plastics before they fragment — restore balance, ripple by ripple.</p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="container mx-auto px-4 sm:px-6 lg:px-8 mt-4 border-t border-gray-300 dark:border-gray-800 pt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+        © <span id="year">2025</span> Project Riptide • Clean today, learn for tomorrow — action plus data.
+      </footer>
+    </div>
+    <script>
+      const y = document.getElementById('year');
+      if (y) y.textContent = String(new Date().getFullYear());
+      const revealEls = document.querySelectorAll('[data-reveal]');
+      revealEls.forEach(el => el.classList.add('opacity-0','translate-y-6','transition-all','duration-700','ease-out'));
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('opacity-100','translate-y-0'); e.target.classList.remove('opacity-0'); io.unobserve(e.target);} });
+      },{threshold:0.15});
+      revealEls.forEach(el=>io.observe(el));
+    </script>
+  </body>
+  </html>

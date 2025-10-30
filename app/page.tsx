@@ -10,6 +10,7 @@ import { ImpactSection } from "@/components/impact-section"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Waves } from "lucide-react"
 import { ReefDivider } from "@/components/reef-divider"
+import { PyrolysisSection } from "@/components/pyrolysis-section"
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -27,8 +28,10 @@ export default function Home() {
   const approachRef = useRef<HTMLElement>(null)
   const crisisRef = useRef<HTMLElement>(null)
   const captureRef = useRef<HTMLElement>(null)
+  const helpRef = useRef<HTMLElement>(null)
   const solutionRef = useRef<HTMLElement>(null)
   const technologyRef = useRef<HTMLElement>(null)
+  const pyrolysisRef = useRef<HTMLElement>(null)
   const aiRef = useRef<HTMLElement>(null)
   const impactRef = useRef<HTMLElement>(null)
   const economicRef = useRef<HTMLElement>(null)
@@ -40,8 +43,10 @@ export default function Home() {
     approachRef,
     crisisRef,
     captureRef,
+    helpRef,
     solutionRef,
     technologyRef,
+    pyrolysisRef,
     aiRef,
     impactRef,
     economicRef,
@@ -154,8 +159,8 @@ export default function Home() {
           <ContentSection
             id="values"
             title="Our Values"
-            content="Project Riptide is driven by environmental sustainability, innovation, and collaboration. We partner with research institutions and local communities to restore aquatic ecosystems while fostering education about plastic pollution's impact on marine life and human health."
-            highlight="Together, we can turn the tide on plastic pollution."
+            content="Project Riptide is driven by a commitment to environmental sustainability. We restore the health of aquatic ecosystems by removing plastic pollution, prioritize innovation and creativity through bio‑inspired solutions like our plastic‑removing fish, and believe in collaboration with research institutions and local communities to scale impact. We foster education and awareness about plastic pollution’s effects and the importance of healthy water bodies, and we uphold ethical responsibility in the careful development and deployment of our technology, ensuring the safety and well‑being of marine life. By embracing these values, we can make a significant contribution to addressing plastic waste and aquatic climate change impacts."
+            highlight="Innovation, collaboration, education, and ethics — our values drive real ocean restoration."
             tone="teal"
           />
         </section>
@@ -167,8 +172,8 @@ export default function Home() {
           <ContentSection
             id="approach"
             title="Our Approach"
-            content="Our approach involves deploying bio-inspired, autonomous robotic fish that collect plastic debris before it breaks down into harmful microplastics. These fish concentrate waste for efficient retrieval and recycling, cleaning aquatic ecosystems while reclaiming valuable materials."
-            highlight="Each movement restores balance — one ripple at a time."
+            content="We deploy bio‑inspired, autonomous fish that remove plastic waste before it can break down into harmful microplastics. These robotic fish collect plastic debris from water bodies, concentrating the waste for efficient retrieval and recycling. The captured plastic is then separated and utilized for various purposes — cleaning aquatic ecosystems while reclaiming valuable materials."
+            highlight="Stop plastics before they fragment — restore balance, ripple by ripple."
             dark
             tone="emerald"
           />
@@ -181,7 +186,7 @@ export default function Home() {
           <ContentSection
             id="crisis"
             title="The Plastic Crisis"
-            content="Plastic pollution is a major contributor to aquatic ecosystem degradation. It contaminates water bodies, harms marine life through ingestion and entanglement, disrupts food chains, causes biodiversity loss, and poses potential human health impacts. Plastic accumulates in massive subtropical oceanic gyres, trapped for decades."
+            content="Plastic pollution — in macro and micro forms — is a major contributor to aquatic ecosystem degradation. It contaminates water bodies, harms marine life via ingestion and entanglement, disrupts food chains, drives biodiversity loss, and poses human health risks. Addressing the crisis requires removing existing debris and transitioning to sustainable materials and waste practices."
             highlight="Every second counts before they become invisible pollutants."
             tone="blue"
           />
@@ -194,8 +199,9 @@ export default function Home() {
           <ContentSection
             id="capture"
             title="Plastic Capture & Storage"
-            content="Our robotic fish target plastic in oceanic gyres where debris concentrates. By removing macroplastics before they fragment into microplastics, we prevent the creation of pollutants that are impossible to fully remove from the ocean."
-            highlight="Prevention is the most powerful form of ocean restoration."
+            content="Plastic accumulates in huge subtropical oceanic gyres — massive circular currents that trap floating plastic for decades. The most infamous is the Great Pacific Garbage Patch (GPGP) between Hawaii and California, estimated to be triple the size of France and containing roughly 100 million kilograms of plastic across 1.8 trillion pieces. Critically, about 92% of this mass is larger macroplastics that are continually fragmenting into hard‑to‑clean secondary microplastics. Immediate large‑scale cleanup must remove macroplastics before they break down further."
+            features={["5 major oceanic gyres", "GPGP ≈ 3× France", "~100M kg & 1.8T pieces", "~92% macroplastics (fragmenting)"]}
+            highlight="Target gyres. Remove macroplastics now. Prevent tomorrow’s microplastics."
             dark
             tone="indigo"
           />
@@ -204,12 +210,24 @@ export default function Home() {
   {/* Divider */}
   <ReefDivider tone="emerald" doubleSided height={64} />
 
+        {/* How We Help: microplastics & data */}
+        <section ref={helpRef}>
+          <ContentSection
+            id="help"
+            title="How We Help"
+            content="Project Riptide offers a crucial, scalable response to microplastic pollution. By deploying autonomous robotic fish, we actively remove microplastics at their source in high‑concentration areas and safeguard marine biodiversity and the integrity of the food web. Each unit doubles as a mobile data platform, streaming real‑time, granular data on microplastic distribution and types to refine cleanup strategies and inform policy."
+            features={["Active microplastic removal at source","Targets high‑concentration hotspots","Real‑time data for science & policy","Bio‑inspired design inspires public action"]}
+            highlight="Clean today, learn for tomorrow — action plus data."
+            tone="emerald"
+          />
+        </section>
+
         <section ref={solutionRef}>
           <ContentSection
             id="solution"
             title="Our Solution"
-            content="Project Riptide offers a scalable solution: autonomous fish that collect plastic and convert it into clean energy using onboard AI and pyrolysis systems."
-            highlight="They're self-powered, data-driven, and designed to make marine cleanup continuous and intelligent."
+            content="A scalable, autonomous system of bio‑inspired fish removes plastic and channels it into AI‑optimized pyrolysis — producing bio‑crude, syngas, and char. The syngas powers the process, creating a self‑sustaining loop and turning pollution into valuable resources."
+            highlight="From plastic to power: circular, continuous, intelligent cleanup."
             tone="teal"
           />
         </section>
@@ -224,12 +242,17 @@ export default function Home() {
   {/* Divider */}
   <ReefDivider tone="teal" doubleSided height={64} />
 
+        {/* Pyrolysis Process */}
+        <section ref={pyrolysisRef}>
+          <PyrolysisSection />
+        </section>
+
         <section ref={aiRef}>
           <ContentSection
             id="ai"
             title="The Use of AI"
-            content="AI is the operational heart of Riptide. Machine learning algorithms analyze each type of plastic, optimize reactor conditions, and perform predictive maintenance."
-            highlight="This ensures maximum efficiency, zero downtime, and continuous energy generation."
+            content="Artificial Intelligence is the operational core of the Riptide pyrolysis line. Machine learning analyzes the incoming feedstock’s chemical composition to optimize reactor temperature and pressure in real time, maximizing conversion of plastic into high‑value bio‑crude and syngas. AI also performs predictive maintenance to prevent downtime and ensure continuous, reliable resource recovery — elevating efficiency and product quality."
+            highlight="Real‑time optimization and predictive maintenance — maximum yield, minimum downtime."
             dark
             tone="emerald"
           />
@@ -249,9 +272,16 @@ export default function Home() {
           <ContentSection
             id="economic"
             title="Economic Value"
-            content="Our circular approach transforms plastic from pollution to profit."
-            features={["Bio-Crude → Sustainable fuels", "Syngas → Energy source", "Char → Industrial carbon product"]}
-            highlight="Project Riptide not only cleans oceans but also creates jobs, fuels innovation, and redefines waste as opportunity."
+            content="The circular model transforms waste liability into valuable commercial assets, creating a robust, sustainable economy. New revenue streams include bio‑crude for refineries (fuels or new plastics), syngas for on‑site heat and power, and char as an industrial carbon product. By reusing discarded plastic, we reduce dependence on volatile fossil feedstocks, stabilize production costs, create regional jobs, and avoid mounting waste management expenses."
+            features={[
+              "Bio‑Crude → refinery feedstock & sustainable fuels",
+              "Syngas → self‑powers operations (energy savings)",
+              "Char → marketable industrial carbon",
+              "Reduced virgin feedstock dependence",
+              "Regional job creation across collection, sorting, and operations",
+              "Waste management cost avoidance",
+            ]}
+            highlight="Turn plastic from liability to asset — profitably and sustainably."
             tone="indigo"
           />
         </section>

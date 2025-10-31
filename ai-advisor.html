@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project Riptide • AI Deployment Advisor</title>
+    <meta name="description" content="AI-powered advisor to determine optimal robot fish deployment conditions." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#007BFF",
+              "background-light": "#F9FAFB",
+              "background-dark": "#0A0A0A",
+            },
+            fontFamily: {
+              display: ["Anton", "sans-serif"],
+              body: ["Space Grotesk", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      html { scroll-behavior: smooth; }
+      body {
+        background: radial-gradient(1200px 600px at 10% -10%, #0a2f3d 0%, transparent 60%),
+                    radial-gradient(1000px 500px at 100% 0%, #0b3a49 0%, transparent 50%),
+                    #041821;
+      }
+      
+      .nav-underline { position: relative; }
+      .nav-underline::after { 
+        content:""; position:absolute; left:10px; right:10px; bottom:6px; 
+        height:2px; background: currentColor; transform: scaleX(0); 
+        transform-origin:center; transition: transform .25s ease; opacity:.7; 
+      }
+      .nav-underline:hover::after { transform: scaleX(1); }
+
+      /* AI Advisor Specific Styles */
+      .advisor-card {
+        background: linear-gradient(145deg, rgba(7, 35, 47, 0.95), rgba(11, 58, 73, 0.85));
+        border: 1px solid rgba(0, 198, 237, 0.2);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 198, 237, 0.15);
+        backdrop-filter: blur(10px);
+      }
+
+      .param-group {
+        margin-bottom: 1.75rem;
+      }
+
+      .param-label {
+        display: block;
+        font-weight: 500;
+        color: #a7c9d6;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+      }
+
+      .param-value {
+        color: #00c6ed;
+        font-weight: 600;
+        margin-left: 0.5rem;
+      }
+
+      /* Custom Slider Styling */
+      input[type="range"] {
+        width: 100%;
+        height: 6px;
+        border-radius: 5px;
+        background: linear-gradient(to right, #00c6ed 0%, #007ba7 100%);
+        outline: none;
+        opacity: 0.85;
+        transition: opacity 0.2s;
+      }
+
+      input[type="range"]:hover {
+        opacity: 1;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #00c6ed;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(0, 198, 237, 0.6);
+        transition: all 0.2s ease;
+      }
+
+      input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 15px rgba(0, 198, 237, 0.9);
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #00c6ed;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 0 10px rgba(0, 198, 237, 0.6);
+        transition: all 0.2s ease;
+      }
+
+      input[type="range"]::-moz-range-thumb:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 15px rgba(0, 198, 237, 0.9);
+      }
+
+      /* Dropdown Styling */
+      select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: rgba(7, 35, 47, 0.8);
+        border: 1px solid rgba(0, 198, 237, 0.3);
+        border-radius: 12px;
+        color: #e7f7ff;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      select:hover {
+        border-color: rgba(0, 198, 237, 0.6);
+        background: rgba(7, 35, 47, 1);
+      }
+
+      select:focus {
+        outline: none;
+        border-color: #00c6ed;
+        box-shadow: 0 0 0 3px rgba(0, 198, 237, 0.2);
+      }
+
+      /* Glowing Predict Button */
+      .predict-btn {
+        width: 100%;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #00c6ed 0%, #007ba7 100%);
+        color: #001b23;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0, 198, 237, 0.4);
+        margin-top: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .predict-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 30px rgba(0, 198, 237, 0.6);
+        background: linear-gradient(135deg, #00e0ff 0%, #0090c0 100%);
+      }
+
+      .predict-btn:active {
+        transform: translateY(0);
+      }
+
+      /* Modal Styles */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background: linear-gradient(145deg, rgba(7, 35, 47, 0.98), rgba(11, 58, 73, 0.95));
+        border: 2px solid rgba(0, 198, 237, 0.4);
+        border-radius: 20px;
+        padding: 2.5rem;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 10px 50px rgba(0, 198, 237, 0.3);
+        animation: slideUp 0.4s ease;
+        position: relative;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        color: #a7c9d6;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: color 0.2s ease;
+        padding: 0.5rem;
+        line-height: 1;
+      }
+
+      .modal-close:hover {
+        color: #00c6ed;
+      }
+
+      .modal-icon {
+        font-size: 4rem;
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+
+      .modal-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 1rem;
+        color: #e7f7ff;
+      }
+
+      .modal-message {
+        font-size: 1.1rem;
+        text-align: center;
+        color: #a7c9d6;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+      }
+
+      .modal-details {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .modal-detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .modal-detail-item:last-child {
+        border-bottom: none;
+      }
+
+      .modal-detail-label {
+        color: #a7c9d6;
+      }
+
+      .modal-detail-value {
+        color: #00c6ed;
+        font-weight: 600;
+      }
+
+      .modal-ok-btn {
+        width: 100%;
+        padding: 0.9rem;
+        background: linear-gradient(135deg, #00c6ed 0%, #007ba7 100%);
+        color: #001b23;
+        font-weight: 600;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 1rem;
+      }
+
+      .modal-ok-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(0, 198, 237, 0.5);
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes slideUp {
+        from { 
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to { 
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Result Colors */
+      .result-deploy { color: #00ff88; }
+      .result-partial { color: #ffa500; }
+      .result-no-deploy { color: #ff4444; }
+    </style>
+  </head>
+  <body class="bg-background-light dark:bg-background-dark font-body text-gray-900 dark:text-gray-100 min-h-screen antialiased">
+    <div class="relative min-h-screen w-full overflow-hidden p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <header class="max-w-6xl mx-auto mb-8">
+        <nav class="flex items-center justify-between py-4 px-2">
+          <a href="about.html" class="text-xl font-display text-white hover:text-blue-400 transition-colors">
+            PROJECT RIPTIDE
+          </a>
+          <div class="flex gap-6">
+            <a href="about.html" class="nav-underline text-gray-300 hover:text-white transition-colors">About</a>
+            <a href="project.html" class="nav-underline text-gray-300 hover:text-white transition-colors">Project</a>
+            <a href="research.html" class="nav-underline text-gray-300 hover:text-white transition-colors">Research</a>
+            <a href="technology.html" class="nav-underline text-gray-300 hover:text-white transition-colors">Technology</a>
+            <a href="ai-advisor.html" class="nav-underline text-blue-400 font-semibold">AI Advisor</a>
+          </div>
+        </nav>
+      </header>
+
+      <!-- Main Content -->
+      <main class="max-w-4xl mx-auto">
+        <div class="text-center mb-10">
+          <h1 class="text-4xl md:text-5xl font-display text-white mb-4">
+            🤖 AI DEPLOYMENT ADVISOR
+          </h1>
+          <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+            Input ocean parameters to determine optimal deployment conditions for the robot fish
+          </p>
+        </div>
+
+        <div class="advisor-card">
+          <form id="advisorForm">
+            <!-- Plastic Concentration -->
+            <div class="param-group">
+              <label class="param-label">
+                🌊 Plastic Concentration
+                <span class="param-value" id="plasticValue">250</span> ppm
+              </label>
+              <input type="range" id="plasticConc" min="0" max="500" value="250" step="5">
+            </div>
+
+            <!-- Water Quality Index -->
+            <div class="param-group">
+              <label class="param-label">
+                💧 Water Quality Index (WQI)
+                <span class="param-value" id="wqiValue">75</span>
+              </label>
+              <input type="range" id="wqi" min="0" max="100" value="75" step="1">
+            </div>
+
+            <!-- Temperature -->
+            <div class="param-group">
+              <label class="param-label">
+                🌡️ Temperature
+                <span class="param-value" id="tempValue">22</span> °C
+              </label>
+              <input type="range" id="temperature" min="10" max="35" value="22" step="0.5">
+            </div>
+
+            <!-- Turbidity -->
+            <div class="param-group">
+              <label class="param-label">
+                🌫️ Turbidity
+                <span class="param-value" id="turbidityValue">40</span>
+              </label>
+              <input type="range" id="turbidity" min="0" max="100" value="40" step="1">
+            </div>
+
+            <!-- Current Speed -->
+            <div class="param-group">
+              <label class="param-label">
+                💨 Current Speed
+                <span class="param-value" id="currentValue">1.2</span> m/s
+              </label>
+              <input type="range" id="currentSpeed" min="0" max="3" value="1.2" step="0.1">
+            </div>
+
+            <!-- Marine Life Density -->
+            <div class="param-group">
+              <label class="param-label">
+                🐠 Marine Life Density
+                <span class="param-value" id="marineValue">6</span>
+              </label>
+              <input type="range" id="marineLife" min="0" max="10" value="6" step="1">
+            </div>
+
+            <!-- Battery Level -->
+            <div class="param-group">
+              <label class="param-label">
+                🔋 Battery Level
+                <span class="param-value" id="batteryValue">80</span> %
+              </label>
+              <input type="range" id="batteryLevel" min="0" max="100" value="80" step="5">
+            </div>
+
+            <!-- Weather Condition -->
+            <div class="param-group">
+              <label class="param-label">
+                ☁️ Weather Condition
+              </label>
+              <select id="weatherCondition">
+                <option value="Calm">Calm</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Stormy">Stormy</option>
+              </select>
+            </div>
+
+            <button type="button" class="predict-btn" id="predictBtn">
+              ⚡ Predict Deployment
+            </button>
+          </form>
+        </div>
+      </main>
+
+      <!-- Result Modal -->
+      <div class="modal-overlay" id="resultModal">
+        <div class="modal-content">
+          <button class="modal-close" id="closeModal">&times;</button>
+          <div class="modal-icon" id="modalIcon">🤖</div>
+          <h2 class="modal-title" id="modalTitle">Analysis Complete</h2>
+          <p class="modal-message" id="modalMessage">Calculating...</p>
+          <div class="modal-details" id="modalDetails">
+            <div class="modal-detail-item">
+              <span class="modal-detail-label">Risk Score:</span>
+              <span class="modal-detail-value" id="riskScoreDisplay">0</span>
+            </div>
+            <div class="modal-detail-item">
+              <span class="modal-detail-label">Pollution Level:</span>
+              <span class="modal-detail-value" id="pollutionDisplay">0</span>
+            </div>
+            <div class="modal-detail-item">
+              <span class="modal-detail-label">Environmental Impact:</span>
+              <span class="modal-detail-value" id="environmentDisplay">0</span>
+            </div>
+            <div class="modal-detail-item">
+              <span class="modal-detail-label">Battery Level:</span>
+              <span class="modal-detail-value" id="batteryDisplay">0%</span>
+            </div>
+            <div class="modal-detail-item">
+              <span class="modal-detail-label">Weather:</span>
+              <span class="modal-detail-value" id="weatherDisplay">-</span>
+            </div>
+          </div>
+          <button class="modal-ok-btn" id="modalOkBtn">Got It</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Update slider values in real-time
+      const sliders = [
+        { id: 'plasticConc', displayId: 'plasticValue' },
+        { id: 'wqi', displayId: 'wqiValue' },
+        { id: 'temperature', displayId: 'tempValue' },
+        { id: 'turbidity', displayId: 'turbidityValue' },
+        { id: 'currentSpeed', displayId: 'currentValue' },
+        { id: 'marineLife', displayId: 'marineValue' },
+        { id: 'batteryLevel', displayId: 'batteryValue' }
+      ];
+
+      sliders.forEach(slider => {
+        const input = document.getElementById(slider.id);
+        const display = document.getElementById(slider.displayId);
+        input.addEventListener('input', (e) => {
+          display.textContent = e.target.value;
+        });
+      });
+
+      // Prediction Logic
+      document.getElementById('predictBtn').addEventListener('click', () => {
+        // Get all input values
+        const plasticConc = parseFloat(document.getElementById('plasticConc').value);
+        const wqi = parseFloat(document.getElementById('wqi').value);
+        const temperature = parseFloat(document.getElementById('temperature').value);
+        const turbidity = parseFloat(document.getElementById('turbidity').value);
+        const currentSpeed = parseFloat(document.getElementById('currentSpeed').value);
+        const marineLife = parseFloat(document.getElementById('marineLife').value);
+        const batteryLevel = parseFloat(document.getElementById('batteryLevel').value);
+        const weather = document.getElementById('weatherCondition').value;
+
+        // Calculate individual components
+        const plasticScore = plasticConc * 0.5;  // Higher plastic = higher risk
+        const waterQualityScore = (100 - wqi) * 0.3;  // Lower WQI = higher risk
+        const turbidityScore = turbidity * 0.2;  // Higher turbidity = higher risk
+        const currentScore = currentSpeed * 15;  // Stronger current = higher risk
+        const marineLifeScore = marineLife * 3;  // More marine life = lower risk (subtracted)
+        
+        // Temperature impact (extreme temps add risk)
+        const tempOptimal = 22; // Optimal temperature
+        const tempScore = Math.abs(temperature - tempOptimal) * 2;
+
+        // Weather multiplier
+        let weatherMultiplier = 1.0;
+        if (weather === "Moderate") weatherMultiplier = 1.3;
+        if (weather === "Stormy") weatherMultiplier = 1.8;
+
+        // Calculate final risk score
+        const baseRiskScore = plasticScore + waterQualityScore + turbidityScore + currentScore + tempScore - marineLifeScore;
+        const riskScore = baseRiskScore * weatherMultiplier;
+
+        // Calculate pollution level (simplified metric for display)
+        const pollutionLevel = (plasticScore + waterQualityScore).toFixed(1);
+        
+        // Calculate environmental impact
+        const environmentalImpact = (turbidityScore + currentScore + tempScore).toFixed(1);
+
+        // Determine deployment decision with more nuanced logic
+        let decision, icon, message, titleClass;
+
+        if (riskScore > 120 && batteryLevel > 30 && weather === "Calm") {
+          decision = "✅ DEPLOY THE ROBOT FISH";
+          icon = "✅";
+          message = "Excellent deployment conditions! High pollution detected with favorable weather and adequate battery. The robot fish will operate at maximum efficiency in this environment.";
+          titleClass = "result-deploy";
+        } else if (riskScore > 100 && batteryLevel > 40) {
+          decision = "✅ DEPLOY THE ROBOT FISH";
+          icon = "✅";
+          message = "Good deployment conditions detected. Significant plastic concentration with acceptable environmental parameters. Deployment is recommended.";
+          titleClass = "result-deploy";
+        } else if (riskScore > 60 && batteryLevel > 50 && weather !== "Stormy") {
+          decision = "⚠️ PARTIAL DEPLOYMENT RECOMMENDED";
+          icon = "⚠️";
+          message = "Moderate conditions detected. Consider limited deployment with close monitoring. Battery and weather conditions allow for cautious operation.";
+          titleClass = "result-partial";
+        } else if (batteryLevel < 30) {
+          decision = "❌ DO NOT DEPLOY NOW";
+          icon = "❌";
+          message = "Battery level too low for safe deployment. Recharge before attempting deployment to ensure the robot fish can complete its mission.";
+          titleClass = "result-no-deploy";
+        } else if (weather === "Stormy") {
+          decision = "❌ DO NOT DEPLOY NOW";
+          icon = "❌";
+          message = "Stormy weather conditions are unsafe for deployment. High currents and poor visibility pose risks to the robot fish. Wait for calmer conditions.";
+          titleClass = "result-no-deploy";
+        } else {
+          decision = "❌ DO NOT DEPLOY NOW";
+          icon = "❌";
+          message = "Current conditions are not favorable for deployment. Risk score indicates low pollution levels or unfavorable environmental parameters. Consider waiting for better conditions.";
+          titleClass = "result-no-deploy";
+        }
+
+        // Display result in modal
+        document.getElementById('modalIcon').textContent = icon;
+        document.getElementById('modalTitle').textContent = decision;
+        document.getElementById('modalTitle').className = `modal-title ${titleClass}`;
+        document.getElementById('modalMessage').textContent = message;
+        document.getElementById('riskScoreDisplay').textContent = riskScore.toFixed(1);
+        document.getElementById('pollutionDisplay').textContent = pollutionLevel;
+        document.getElementById('environmentDisplay').textContent = environmentalImpact;
+        document.getElementById('batteryDisplay').textContent = batteryLevel + '%';
+        document.getElementById('weatherDisplay').textContent = weather;
+
+        // Show modal
+        document.getElementById('resultModal').classList.add('active');
+      });
+
+      // Close modal handlers
+      document.getElementById('closeModal').addEventListener('click', () => {
+        document.getElementById('resultModal').classList.remove('active');
+      });
+
+      document.getElementById('modalOkBtn').addEventListener('click', () => {
+        document.getElementById('resultModal').classList.remove('active');
+      });
+
+      // Close modal when clicking outside
+      document.getElementById('resultModal').addEventListener('click', (e) => {
+        if (e.target.id === 'resultModal') {
+          document.getElementById('resultModal').classList.remove('active');
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project Riptide • Slideshow Presentation</title>
+    <meta name="description" content="Automatic slideshow presentation of Project Riptide" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      
+      body {
+        font-family: 'Space Grotesk', sans-serif;
+        background: #000;
+        overflow: hidden;
+        color: white;
+      }
+
+      .slideshow-container {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .slide-frame {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.8s ease-in-out;
+        pointer-events: none;
+      }
+
+      .slide-frame.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .slide-frame iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
+      /* Controls Overlay */
+      .slideshow-controls {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 15px 30px;
+        border-radius: 50px;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        z-index: 10000;
+        box-shadow: 0 4px 30px rgba(0, 198, 237, 0.3);
+        border: 1px solid rgba(0, 198, 237, 0.5);
+      }
+
+      .control-btn {
+        background: linear-gradient(135deg, #00c6ed 0%, #007ba7 100%);
+        border: none;
+        color: #001b23;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        transition: all 0.3s ease;
+        font-weight: bold;
+      }
+
+      .control-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(0, 198, 237, 0.8);
+      }
+
+      .control-btn:active {
+        transform: scale(0.95);
+      }
+
+      .control-btn.pause-btn {
+        width: 55px;
+        height: 55px;
+        font-size: 20px;
+      }
+
+      .slide-counter {
+        color: #00c6ed;
+        font-weight: 600;
+        font-size: 16px;
+        min-width: 80px;
+        text-align: center;
+      }
+
+      /* Progress Bar */
+      .progress-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 10000;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #00c6ed 0%, #007ba7 100%);
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      /* Exit Button */
+      .exit-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 68, 68, 0.9);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        z-index: 10000;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .exit-btn:hover {
+        background: rgba(255, 68, 68, 1);
+        transform: scale(1.05);
+      }
+
+      /* Slide Title Overlay */
+      .slide-title {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 15px 25px;
+        border-radius: 15px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #00c6ed;
+        z-index: 9999;
+        border: 1px solid rgba(0, 198, 237, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* AI Prediction Overlay */
+      .ai-prediction-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9998;
+        animation: fadeIn 0.5s ease;
+      }
+
+      .ai-prediction-overlay.active {
+        display: flex;
+      }
+
+      .prediction-content {
+        background: linear-gradient(145deg, rgba(7, 35, 47, 0.98), rgba(11, 58, 73, 0.95));
+        border: 2px solid rgba(0, 198, 237, 0.6);
+        border-radius: 25px;
+        padding: 40px;
+        max-width: 600px;
+        text-align: center;
+        animation: slideUp 0.6s ease;
+      }
+
+      .prediction-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+      }
+
+      .prediction-title {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+
+      .prediction-message {
+        font-size: 18px;
+        line-height: 1.6;
+        color: #a7c9d6;
+        margin-bottom: 30px;
+      }
+
+      .prediction-details {
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+
+      .prediction-detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .prediction-detail-item:last-child {
+        border-bottom: none;
+      }
+
+      .prediction-detail-label {
+        color: #a7c9d6;
+      }
+
+      .prediction-detail-value {
+        color: #00c6ed;
+        font-weight: 600;
+      }
+
+      .result-deploy { color: #00ff88; }
+      .result-partial { color: #ffa500; }
+      .result-no-deploy { color: #ff4444; }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes slideUp {
+        from { 
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to { 
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .slideshow-controls {
+          padding: 12px 20px;
+          gap: 15px;
+        }
+        
+        .control-btn {
+          width: 40px;
+          height: 40px;
+          font-size: 16px;
+        }
+        
+        .control-btn.pause-btn {
+          width: 48px;
+          height: 48px;
+        }
+        
+        .slide-title {
+          font-size: 14px;
+          padding: 10px 15px;
+        }
+        
+        .prediction-content {
+          padding: 30px 20px;
+          max-width: 90%;
+        }
+        
+        .prediction-title {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slideshow-container">
+      <!-- Progress Bar -->
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <!-- Exit Button -->
+      <button class="exit-btn" id="exitBtn">✕ Exit Slideshow</button>
+
+      <!-- Slide Title -->
+      <div class="slide-title" id="slideTitle">Loading...</div>
+
+      <!-- Slide Frames -->
+      <div class="slide-frame active" id="slide0">
+        <iframe src="index.html"></iframe>
+      </div>
+      <div class="slide-frame" id="slide1">
+        <iframe src="about.html"></iframe>
+      </div>
+      <div class="slide-frame" id="slide2">
+        <iframe src="technology.html"></iframe>
+      </div>
+      <div class="slide-frame" id="slide3">
+        <iframe src="project.html"></iframe>
+      </div>
+      <div class="slide-frame" id="slide4">
+        <iframe src="research.html"></iframe>
+      </div>
+      <div class="slide-frame" id="slide5">
+        <iframe src="ai-advisor.html" id="aiAdvisorFrame"></iframe>
+      </div>
+
+      <!-- Controls -->
+      <div class="slideshow-controls">
+        <button class="control-btn" id="prevBtn" title="Previous">◀</button>
+        <button class="control-btn pause-btn" id="pauseBtn" title="Pause/Play">⏸</button>
+        <span class="slide-counter" id="slideCounter">1 / 6</span>
+        <button class="control-btn" id="nextBtn" title="Next">▶</button>
+      </div>
+
+      <!-- AI Prediction Overlay -->
+      <div class="ai-prediction-overlay" id="predictionOverlay">
+        <div class="prediction-content">
+          <div class="prediction-icon" id="predictionIcon">🤖</div>
+          <h2 class="prediction-title" id="predictionTitle">Analyzing...</h2>
+          <p class="prediction-message" id="predictionMessage">Running AI prediction...</p>
+          <div class="prediction-details" id="predictionDetails">
+            <div class="prediction-detail-item">
+              <span class="prediction-detail-label">Risk Score:</span>
+              <span class="prediction-detail-value" id="riskScore">0</span>
+            </div>
+            <div class="prediction-detail-item">
+              <span class="prediction-detail-label">Pollution Level:</span>
+              <span class="prediction-detail-value" id="pollutionLevel">0</span>
+            </div>
+            <div class="prediction-detail-item">
+              <span class="prediction-detail-label">Battery Level:</span>
+              <span class="prediction-detail-value" id="batteryLevel">0%</span>
+            </div>
+            <div class="prediction-detail-item">
+              <span class="prediction-detail-label">Weather:</span>
+              <span class="prediction-detail-value" id="weather">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const slides = [
+        { title: '🏠 Home - Project Riptide', duration: 6000 },
+        { title: '📖 About Us', duration: 7000 },
+        { title: '⚙️ Technology', duration: 7000 },
+        { title: '🚀 The Project', duration: 7000 },
+        { title: '🔬 Research', duration: 7000 },
+        { title: '🤖 AI Deployment Advisor', duration: 10000 }
+      ];
+
+      let currentSlide = 0;
+      let isPaused = false;
+      let autoAdvanceTimer = null;
+
+      const slideFrames = document.querySelectorAll('.slide-frame');
+      const slideTitle = document.getElementById('slideTitle');
+      const slideCounter = document.getElementById('slideCounter');
+      const progressBar = document.getElementById('progressBar');
+      const pauseBtn = document.getElementById('pauseBtn');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const exitBtn = document.getElementById('exitBtn');
+      const predictionOverlay = document.getElementById('predictionOverlay');
+
+      function updateSlide(index) {
+        // Remove active class from all slides
+        slideFrames.forEach(frame => frame.classList.remove('active'));
+        
+        // Add active class to current slide
+        slideFrames[index].classList.add('active');
+        
+        // Update UI
+        slideTitle.textContent = slides[index].title;
+        slideCounter.textContent = `${index + 1} / ${slides.length}`;
+        progressBar.style.width = `${((index + 1) / slides.length) * 100}%`;
+
+        currentSlide = index;
+
+        // If it's the AI Advisor slide, trigger prediction
+        if (index === 5) {
+          setTimeout(() => {
+            runAIPrediction();
+          }, 2000);
+        }
+
+        // Set up auto-advance if not paused
+        if (!isPaused) {
+          clearTimeout(autoAdvanceTimer);
+          autoAdvanceTimer = setTimeout(() => {
+            nextSlide();
+          }, slides[index].duration);
+        }
+      }
+
+      function nextSlide() {
+        const nextIndex = (currentSlide + 1) % slides.length;
+        updateSlide(nextIndex);
+      }
+
+      function prevSlide() {
+        const prevIndex = currentSlide === 0 ? slides.length - 1 : currentSlide - 1;
+        updateSlide(prevIndex);
+      }
+
+      function togglePause() {
+        isPaused = !isPaused;
+        pauseBtn.textContent = isPaused ? '▶' : '⏸';
+        
+        if (isPaused) {
+          clearTimeout(autoAdvanceTimer);
+        } else {
+          autoAdvanceTimer = setTimeout(() => {
+            nextSlide();
+          }, slides[currentSlide].duration);
+        }
+      }
+
+      function runAIPrediction() {
+        // Generate random ocean parameters
+        const plasticConc = Math.floor(Math.random() * 500);
+        const wqi = Math.floor(Math.random() * 100);
+        const temperature = (Math.random() * 25 + 10).toFixed(1);
+        const turbidity = Math.floor(Math.random() * 100);
+        const currentSpeed = (Math.random() * 3).toFixed(1);
+        const marineLife = Math.floor(Math.random() * 10);
+        const batteryLevel = Math.floor(Math.random() * 100);
+        const weatherOptions = ['Calm', 'Moderate', 'Stormy'];
+        const weather = weatherOptions[Math.floor(Math.random() * weatherOptions.length)];
+
+        // Calculate risk score (same logic as ai-advisor.html)
+        const plasticScore = plasticConc * 0.5;
+        const waterQualityScore = (100 - wqi) * 0.3;
+        const turbidityScore = turbidity * 0.2;
+        const currentScore = currentSpeed * 15;
+        const marineLifeScore = marineLife * 3;
+        const tempOptimal = 22;
+        const tempScore = Math.abs(temperature - tempOptimal) * 2;
+
+        let weatherMultiplier = 1.0;
+        if (weather === "Moderate") weatherMultiplier = 1.3;
+        if (weather === "Stormy") weatherMultiplier = 1.8;
+
+        const baseRiskScore = plasticScore + waterQualityScore + turbidityScore + currentScore + tempScore - marineLifeScore;
+        const riskScore = baseRiskScore * weatherMultiplier;
+        const pollutionLevel = (plasticScore + waterQualityScore).toFixed(1);
+
+        // Determine decision
+        let decision, icon, message, titleClass;
+
+        if (riskScore > 120 && batteryLevel > 30 && weather === "Calm") {
+          decision = "✅ DEPLOY THE ROBOT FISH";
+          icon = "✅";
+          message = "Excellent deployment conditions! High pollution detected with favorable weather and adequate battery.";
+          titleClass = "result-deploy";
+        } else if (riskScore > 100 && batteryLevel > 40) {
+          decision = "✅ DEPLOY THE ROBOT FISH";
+          icon = "✅";
+          message = "Good deployment conditions detected. Significant plastic concentration with acceptable parameters.";
+          titleClass = "result-deploy";
+        } else if (riskScore > 60 && batteryLevel > 50 && weather !== "Stormy") {
+          decision = "⚠️ PARTIAL DEPLOYMENT";
+          icon = "⚠️";
+          message = "Moderate conditions detected. Consider limited deployment with close monitoring.";
+          titleClass = "result-partial";
+        } else if (batteryLevel < 30) {
+          decision = "❌ DO NOT DEPLOY NOW";
+          icon = "❌";
+          message = "Battery level too low for safe deployment. Recharge before attempting deployment.";
+          titleClass = "result-no-deploy";
+        } else if (weather === "Stormy") {
+          decision = "❌ DO NOT DEPLOY NOW";
+          icon = "❌";
+          message = "Stormy weather conditions are unsafe for deployment. Wait for calmer conditions.";
+          titleClass = "result-no-deploy";
+        } else {
+          decision = "❌ DO NOT DEPLOY NOW";
+          icon = "❌";
+          message = "Current conditions are not favorable for deployment. Wait for better conditions.";
+          titleClass = "result-no-deploy";
+        }
+
+        // Display prediction overlay
+        document.getElementById('predictionIcon').textContent = icon;
+        document.getElementById('predictionTitle').textContent = decision;
+        document.getElementById('predictionTitle').className = `prediction-title ${titleClass}`;
+        document.getElementById('predictionMessage').textContent = message;
+        document.getElementById('riskScore').textContent = riskScore.toFixed(1);
+        document.getElementById('pollutionLevel').textContent = pollutionLevel;
+        document.getElementById('batteryLevel').textContent = batteryLevel + '%';
+        document.getElementById('weather').textContent = weather;
+
+        predictionOverlay.classList.add('active');
+
+        // Hide overlay after 5 seconds and continue slideshow
+        setTimeout(() => {
+          predictionOverlay.classList.remove('active');
+        }, 5000);
+      }
+
+      // Event Listeners
+      prevBtn.addEventListener('click', () => {
+        clearTimeout(autoAdvanceTimer);
+        prevSlide();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        clearTimeout(autoAdvanceTimer);
+        nextSlide();
+      });
+
+      pauseBtn.addEventListener('click', togglePause);
+
+      exitBtn.addEventListener('click', () => {
+        window.location.href = 'index.html';
+      });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+          e.preventDefault();
+          clearTimeout(autoAdvanceTimer);
+          nextSlide();
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          clearTimeout(autoAdvanceTimer);
+          prevSlide();
+        } else if (e.key === 'Escape') {
+          window.location.href = 'index.html';
+        } else if (e.key === 'p' || e.key === 'P') {
+          togglePause();
+        }
+      });
+
+      // Initialize
+      updateSlide(0);
+    </script>
+  </body>
+</html>

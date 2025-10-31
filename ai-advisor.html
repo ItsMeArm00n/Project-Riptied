@@ -431,30 +431,13 @@
           <div class="modal-icon" id="modalIcon">🤖</div>
           <h2 class="modal-title" id="modalTitle">Analysis Complete</h2>
           <p class="modal-message" id="modalMessage">Calculating...</p>
-          <div class="modal-details" id="modalDetails">
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Risk Score:</span>
-              <span class="modal-detail-value" id="riskScoreDisplay">0</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Pollution Level:</span>
-              <span class="modal-detail-value" id="pollutionDisplay">0</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Environmental Impact:</span>
-              <span class="modal-detail-value" id="environmentDisplay">0</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Battery Level:</span>
-              <span class="modal-detail-value" id="batteryDisplay">0%</span>
-            </div>
-            <div class="modal-detail-item">
-              <span class="modal-detail-label">Weather:</span>
-              <span class="modal-detail-value" id="weatherDisplay">-</span>
-            </div>
+          <div style="text-align: center; margin: 20px 0;">
+            <div style="font-size: 14px; color: #a7c9d6; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Risk Level</div>
+            <div style="font-size: 48px; font-weight: 700; color: #00c6ed;" id="riskPercentage">0%</div>
           </div>
           <button class="modal-ok-btn" id="modalOkBtn">Got It</button>
         </div>
+      </div>
       </div>
     </div>
 
@@ -516,51 +499,87 @@
         // Calculate environmental impact
         const environmentalImpact = (turbidityScore + currentScore + tempScore).toFixed(1);
 
+        // Calculate risk percentage (0-100%) - INVERTED so low % = safe, high % = risky
+        // Factors that increase risk: low battery, bad weather, low pollution (nothing to clean), extreme conditions
+        let riskPercentage = 0;
+        
+        // Battery risk (lower battery = higher risk)
+        const batteryRisk = (100 - batteryLevel) * 0.3;
+        
+        // Weather risk
+        let weatherRisk = 0;
+        if (weather === "Moderate") weatherRisk = 20;
+        if (weather === "Stormy") weatherRisk = 45;
+        
+        // Pollution benefit (higher pollution = deployment makes sense = lower risk)
+        // If pollution is low, there's no point deploying = higher risk
+        const pollutionBenefit = Math.max(0, 30 - (plasticConc / 500 * 30)); // Max 30% risk if no pollution
+        
+        // Environmental hazard risk
+        const envRisk = (turbidity / 100 * 10) + (currentSpeed / 3 * 15);
+        
+        // Water quality risk (lower WQI = worse water = higher risk)
+        const wqiRisk = (100 - wqi) / 100 * 15;
+        
+        // Calculate total risk percentage
+        riskPercentage = Math.min(100, Math.max(0, 
+          batteryRisk + weatherRisk + pollutionBenefit + envRisk + wqiRisk
+        ));
+
         // Determine deployment decision with more nuanced logic
-        let decision, icon, message, titleClass;
+        let decision, icon, message, titleClass, riskColor;
 
         if (riskScore > 120 && batteryLevel > 30 && weather === "Calm") {
           decision = "✅ DEPLOY THE ROBOT FISH";
           icon = "✅";
           message = "Excellent deployment conditions! High pollution detected with favorable weather and adequate battery. The robot fish will operate at maximum efficiency in this environment.";
           titleClass = "result-deploy";
+          riskPercentage = Math.min(15, riskPercentage); // Cap at 5-15% for full deploy
+          riskColor = "#00ff88";
         } else if (riskScore > 100 && batteryLevel > 40) {
           decision = "✅ DEPLOY THE ROBOT FISH";
           icon = "✅";
           message = "Good deployment conditions detected. Significant plastic concentration with acceptable environmental parameters. Deployment is recommended.";
           titleClass = "result-deploy";
+          riskPercentage = Math.min(20, Math.max(10, riskPercentage)); // 10-20% for good deploy
+          riskColor = "#00ff88";
         } else if (riskScore > 60 && batteryLevel > 50 && weather !== "Stormy") {
           decision = "⚠️ PARTIAL DEPLOYMENT RECOMMENDED";
           icon = "⚠️";
           message = "Moderate conditions detected. Consider limited deployment with close monitoring. Battery and weather conditions allow for cautious operation.";
           titleClass = "result-partial";
+          riskPercentage = Math.min(65, Math.max(40, riskPercentage)); // 40-65% for partial
+          riskColor = "#ffa500";
         } else if (batteryLevel < 30) {
           decision = "❌ DO NOT DEPLOY NOW";
           icon = "❌";
           message = "Battery level too low for safe deployment. Recharge before attempting deployment to ensure the robot fish can complete its mission.";
           titleClass = "result-no-deploy";
+          riskPercentage = Math.max(75, riskPercentage); // 75-95% for no deploy
+          riskColor = "#ff4444";
         } else if (weather === "Stormy") {
           decision = "❌ DO NOT DEPLOY NOW";
           icon = "❌";
           message = "Stormy weather conditions are unsafe for deployment. High currents and poor visibility pose risks to the robot fish. Wait for calmer conditions.";
           titleClass = "result-no-deploy";
+          riskPercentage = Math.max(85, riskPercentage); // 85-95% for stormy
+          riskColor = "#ff4444";
         } else {
           decision = "❌ DO NOT DEPLOY NOW";
           icon = "❌";
           message = "Current conditions are not favorable for deployment. Risk score indicates low pollution levels or unfavorable environmental parameters. Consider waiting for better conditions.";
           titleClass = "result-no-deploy";
+          riskPercentage = Math.max(70, riskPercentage); // 70-90% for general no deploy
+          riskColor = "#ff4444";
         }
 
         // Display result in modal
         document.getElementById('modalIcon').textContent = icon;
         document.getElementById('modalTitle').textContent = decision;
         document.getElementById('modalTitle').className = `modal-title ${titleClass}`;
+        document.getElementById('riskPercentage').textContent = Math.round(riskPercentage) + '%';
+        document.getElementById('riskPercentage').style.color = riskColor;
         document.getElementById('modalMessage').textContent = message;
-        document.getElementById('riskScoreDisplay').textContent = riskScore.toFixed(1);
-        document.getElementById('pollutionDisplay').textContent = pollutionLevel;
-        document.getElementById('environmentDisplay').textContent = environmentalImpact;
-        document.getElementById('batteryDisplay').textContent = batteryLevel + '%';
-        document.getElementById('weatherDisplay').textContent = weather;
 
         // Show modal
         document.getElementById('resultModal').classList.add('active');
